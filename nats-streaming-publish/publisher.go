@@ -11,6 +11,7 @@ func main() {
 	connect, err := stan.Connect("test-cluster", "pub", stan.NatsURL("nats://localhost:4222"))
 	if err != nil {
 		log.Fatalf("failed to connect to nats: %v", err)
+		return
 	}
 	defer connect.Close()
 
@@ -26,11 +27,13 @@ func main() {
 	}
 	if scanner.Err() != nil {
 		log.Fatalf("failed to scan file: %v", scanner.Err().Error())
+		return
 	}
 
 	err = connect.Publish("test", mes)
 	if err != nil {
 		log.Fatalf("failed to publish: %v", err)
+		return
 	} else {
 		log.Println("mes published")
 	}
