@@ -6,3 +6,18 @@ services:
     ports:
       - "4222:4222"  # messages
       - "8222:8222"  # monitor
+  postgresql:
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=testDB
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=postgres
+    image: postgres:latest
+    restart: always
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      #- db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  db-data:
