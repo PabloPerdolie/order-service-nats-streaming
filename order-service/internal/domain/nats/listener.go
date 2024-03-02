@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-func ListenerConnect(db *postgres.Storage) error {
+func InitListener() error {
 
 	natsCon, err := nats.Connect("nats://localhost:4222")
 	if err != nil {
@@ -24,7 +24,7 @@ func ListenerConnect(db *postgres.Storage) error {
 		if err != nil {
 			return
 		}
-		db.CreateOrder(context.Background(), order)
+		postgres.CreateOrder(context.Background(), order)
 		//todo CACHE
 	})
 	if err != nil {
