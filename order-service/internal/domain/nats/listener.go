@@ -17,6 +17,8 @@ func InitListener() error {
 		return err
 	}
 
+	log.Println("Successfully initialized nats-listener")
+
 	_, err = natsCon.Subscribe("test.orders", func(msg *nats.Msg) {
 		log.Printf("mes received %v", msg.Data)
 		var order models.Order
