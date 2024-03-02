@@ -9,15 +9,15 @@ services:
   postgresql:
     container_name: postgres
     environment:
-      - POSTGRES_DB=testDB
-      - POSTGRES_PASSWORD=123456
       - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=testDB
     image: postgres:latest
     restart: always
     volumes:
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
       #- db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 volumes:
   db-data:

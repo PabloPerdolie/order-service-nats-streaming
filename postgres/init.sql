@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS delivery (
+CREATE TABLE IF NOT EXISTS deliveries (
     delivery_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS delivery (
     email VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS payment (
+CREATE TABLE IF NOT EXISTS payments (
     payment_id SERIAL PRIMARY KEY,
     transaction VARCHAR(255) NOT NULL,
     request_id VARCHAR(255) NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS payment (
     custom_fee INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS item (
+CREATE TABLE IF NOT EXISTS items (
     item_id SERIAL PRIMARY KEY,
     chrt_id INT NOT NULL UNIQUE,
     track_number VARCHAR(255) NOT NULL,
@@ -53,22 +53,22 @@ CREATE TABLE IF NOT EXISTS orders (
     oof_shard VARCHAR(255) NOT NULL,
     delivery_id INT NOT NULL,
     payment_id INT NOT NULL,
-    CONSTRAINT fk_delivery_id FOREIGN KEY (delivery_id) REFERENCES delivery(delivery_id),
-    CONSTRAINT fk_payment_id FOREIGN KEY (payment_id) REFERENCES payment(payment_id)
+    CONSTRAINT fk_delivery_id FOREIGN KEY (delivery_id) REFERENCES deliveries(delivery_id),
+    CONSTRAINT fk_payment_id FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
 );
 
 CREATE INDEX IF NOT EXISTS fk_delivery_id ON orders (delivery_id);
 
 CREATE INDEX IF NOT EXISTS fk_payment_id ON orders (payment_id);
 
-CREATE TABLE IF NOT EXISTS order_item (
+CREATE TABLE IF NOT EXISTS order_items (
     id        SERIAL PRIMARY KEY,
     order_uid text NOT NULL,
     chrt_id   integer NOT NULL,
     CONSTRAINT fk_order_uid FOREIGN KEY(order_uid) REFERENCES orders(order_uid) ON DELETE CASCADE,
-    CONSTRAINT fk_chrt_id FOREIGN KEY(chrt_id) REFERENCES item(chrt_id) ON DELETE CASCADE
+    CONSTRAINT fk_chrt_id FOREIGN KEY(chrt_id) REFERENCES items(chrt_id) ON DELETE CASCADE
 );
 
-CREATE INDEX IF NOT EXISTS fk_chrt_id ON order_item (chrt_id);
+CREATE INDEX IF NOT EXISTS fk_chrt_id ON order_items (chrt_id);
 
-CREATE INDEX IF NOT EXISTS fk_order_uid ON order_item (order_uid);
+CREATE INDEX IF NOT EXISTS fk_order_uid ON order_items (order_uid);
