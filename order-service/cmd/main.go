@@ -17,9 +17,11 @@ func main() {
 		panic(err)
 	}
 
-	if err := nats.InitListener(); err != nil {
-		panic(err)
-	}
+	go func() {
+		if err := nats.InitListener(); err != nil {
+			panic(err)
+		}
+	}()
 
 	if err := api.InitRouter(); err != nil {
 		panic(err)
