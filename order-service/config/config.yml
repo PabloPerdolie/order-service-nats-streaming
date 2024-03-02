@@ -1,0 +1,18 @@
+env: local
+
+server:
+  url: localhost:8080
+
+nats:
+  url: nats://localhost:4222
+  stream-name: TEST
+  stream-subjects: TEST.*
+  subject-name: TEST.orders
+  subscriber: sub
+
+db:
+  user: postgres
+  password: 123456
+  name: testDB
+  host: localhost
+  port: 5433

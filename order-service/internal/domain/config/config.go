@@ -30,10 +30,10 @@ type Config struct {
 
 func InitConfig() error {
 
-	if err := cleanenv.ReadConfig("../../config/local.yml", &CONFIG); err != nil {
+	if err := cleanenv.ReadConfig("order-service/config/config.yml", &CONFIG); err != nil {
 		log.Fatal(err)
 		return err
 	}
-	log.Println("successfully initialized config")
+	log.Println("Successfully initialized config")
 	return nil
 }
