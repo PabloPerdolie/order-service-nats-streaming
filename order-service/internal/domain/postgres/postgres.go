@@ -8,27 +8,23 @@ import (
 	"log"
 )
 
-type Storage struct {
-	db *gorm.DB
-}
+var DB *gorm.DB
 
-func InitClient() (*Storage, error) {
-	db, err := postgres.ConnectToDB(context.Background())
+func InitDB() error {
+	var err error
+	DB, err = postgres.ConnectToDB(context.Background())
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	return &Storage{
-		db: db,
-	}, nil
+	return nil
 }
 
-func (s *Storage) GetOrderByUid(ctx context.Context, uid string) (order models.Order, err error) {
+func GetOrderByUid(ctx context.Context, uid string) (order models.Order, err error) {
 
 	return order, err
 }
 
-func (s *Storage) CreateOrder(ctx context.Context, order models.Order) (err error) {
+func CreateOrder(ctx context.Context, order models.Order) (err error) {
 	//result := s.db.Create(&order.Delivery)
 	//if result.Error != nil {
 	//	log.Fatalf("failed to create delivery: %v", result.Error.Error())
@@ -48,7 +44,7 @@ func (s *Storage) CreateOrder(ctx context.Context, order models.Order) (err erro
 	//	log.Fatalf("failed to create delivery: %v", result.Error.Error())
 	//}
 
-	result := s.db.Create(&order.Delivery)
+	result := DB.Create(&order.Delivery)
 	if result.Error != nil {
 		log.Fatalf("failed to create order: %v", result.Error.Error())
 	}

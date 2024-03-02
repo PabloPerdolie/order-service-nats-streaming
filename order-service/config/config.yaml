@@ -1,0 +1,18 @@
+env: local
+
+server:
+  url: localhost:8080
+
+nats:
+  url: nats://localhost:4222
+  stream-name:
+  stream-subjects:
+  subject-name:
+  subscriber:
+
+db:
+  user:
+  password:
+  name:
+  host:
+  port:
