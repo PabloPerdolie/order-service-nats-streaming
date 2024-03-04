@@ -9,6 +9,8 @@ nats:
   stream-subjects: TEST.*
   subject-name: TEST.orders
   subscriber: sub
+  serverID: test-cluster
+  clientID: test-client
 
 db:
   user: postgres
