@@ -10,6 +10,10 @@ import (
 	"log"
 )
 
+type orderUid struct {
+	Uid string `json:"order_uid"`
+}
+
 func InitListener() error {
 	conf := config.CONFIG.Nats
 	natsCon, err := nats.Connect(conf.URL)
@@ -28,13 +32,23 @@ func InitListener() error {
 	_, err = js.Subscribe(conf.SubjectName, func(msg *nats.Msg) {
 		msg.Ack()
 
-		var order models.Order
-		err := json.Unmarshal(msg.Data, &order)
+		var uid orderUid
+		err := json.Unmarshal(msg.Data, &uid)
 		if err != nil {
 			return
 		}
-		log.Printf("mes received %v", order)
-		postgres.CreateOrder(context.Background(), order)
+
+		order := models.Order{
+			OrderUid: uid.Uid,
+			JsonData: msg.Data,
+		}
+		log.Printf("mes received %v", order.OrderUid)
+
+		err = postgres.CreateOrder(context.Background(), order)
+		if err != nil {
+			log.Print(err)
+		}
+
 		//todo CACHE
 	}, nats.Durable(conf.Subscriber), nats.ManualAck())
 

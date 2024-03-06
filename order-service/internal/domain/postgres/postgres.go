@@ -19,34 +19,30 @@ func InitDB() error {
 	return nil
 }
 
-func GetOrderByUid(ctx context.Context, uid string) (order models.Order, err error) {
+func GetAll(ctx context.Context) (orders []models.Order, err error) {
+	result := DB.Find(&orders)
+	if result.Error != nil {
+		log.Fatalf("failed to find all orders: %v", result.Error.Error())
+		return nil, result.Error
+	}
 
-	return order, err
+	return orders, nil
+}
+
+func GetOrderByUid(ctx context.Context, uid string) (order models.Order, err error) {
+	result := DB.Where("order_uid = ?", uid).Find(&order)
+	if result.Error != nil {
+		log.Fatalf("failed to find order by order_uid: %s, cause of: %v", uid, result.Error.Error())
+	}
+	return order, result.Error
 }
 
 func CreateOrder(ctx context.Context, order models.Order) (err error) {
-	//result := s.db.Create(&order.Delivery)
-	//if result.Error != nil {
-	//	log.Fatalf("failed to create delivery: %v", result.Error.Error())
-	//}
-	//result = s.db.Create(&order.Payment)
-	//if result.Error != nil {
-	//	log.Fatalf("failed to create delivery: %v", result.Error.Error())
-	//}
-	//for item := range order.Items {
-	//	result = s.db.Create(&item)
-	//	if result.Error != nil {
-	//		log.Fatalf("failed to create delivery: %v", result.Error.Error())
-	//	}
-	//}
-	//result = s.db.Create(&order.Items)
-	//if result.Error != nil {
-	//	log.Fatalf("failed to create delivery: %v", result.Error.Error())
-	//}
-
-	result := DB.Create(&order.Delivery)
+	result := DB.Create(&order)
 	if result.Error != nil {
-		log.Fatalf("failed to create order: %v", result.Error.Error())
+		log.Printf("failed to create order: %v", result.Error.Error())
+		return result.Error
 	}
+	log.Println("added to DB")
 	return nil
 }

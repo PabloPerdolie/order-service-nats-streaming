@@ -38,7 +38,7 @@ func main() {
 
 	stream, err := js.StreamInfo("TEST")
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	if stream == nil {
