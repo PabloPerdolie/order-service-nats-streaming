@@ -18,6 +18,8 @@ type Config struct {
 		StreamSubjects string `yaml:"stream-subjects"`
 		SubjectName    string `yaml:"subject-name"`
 		Subscriber     string `yaml:"subscriber"`
+		ServerId       string `yaml:"serverId"`
+		ClientId       string `yaml:"clientId"`
 	} `yaml:"nats"`
 	DB struct {
 		User     string `yaml:"user"`

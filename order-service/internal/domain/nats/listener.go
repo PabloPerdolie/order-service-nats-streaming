@@ -1,6 +1,7 @@
 package nats
 
 import (
+	"L0/order-service/internal/domain/config"
 	"L0/order-service/internal/domain/models"
 	"L0/order-service/internal/domain/postgres"
 	"context"
@@ -9,26 +10,52 @@ import (
 	"log"
 )
 
-func InitListener() error {
+type orderUid struct {
+	Uid string `json:"order_uid"`
+}
 
-	natsCon, err := nats.Connect("nats://localhost:4222")
+func InitListener() error {
+	conf := config.CONFIG.Nats
+	natsCon, err := nats.Connect(conf.URL)
 	if err != nil {
-		log.Fatalf("failed to connect nats: %v", err)
+		return err
+	}
+
+	js, err := natsCon.JetStream()
+
+	if err != nil {
 		return err
 	}
 
 	log.Println("Successfully initialized nats-listener")
 
-	_, err = natsCon.Subscribe("test.orders", func(msg *nats.Msg) {
-		log.Printf("mes received %v", msg.Data)
-		var order models.Order
-		err := json.Unmarshal(msg.Data, &order)
+	_, err = js.Subscribe(conf.SubjectName, func(msg *nats.Msg) {
+		msg.Ack()
+
+		var uid orderUid
+		err := json.Unmarshal(msg.Data, &uid)
 		if err != nil {
 			return
 		}
-		postgres.CreateOrder(context.Background(), order)
+
+		order := models.Order{
+			OrderUid: uid.Uid,
+			JsonData: msg.Data,
+		}
+		log.Printf("mes received %v", order.OrderUid)
+
+		err = postgres.CreateOrder(context.Background(), order)
+		if err != nil {
+			log.Print(err)
+		}
+
 		//todo CACHE
-	})
+	}, nats.Durable(conf.Subscriber), nats.ManualAck())
+
+	if err != nil {
+		return err
+	}
+
 	if err != nil {
 		return err
 	}
