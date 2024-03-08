@@ -1,6 +1,7 @@
 package nats
 
 import (
+	"L0/order-service/internal/domain/cache"
 	"L0/order-service/internal/domain/config"
 	"L0/order-service/internal/domain/models"
 	"L0/order-service/internal/domain/postgres"
@@ -48,8 +49,7 @@ func InitListener() error {
 		if err != nil {
 			log.Print(err)
 		}
-
-		//todo CACHE
+		cache.AddToCache(order)
 	}, nats.Durable(conf.Subscriber), nats.ManualAck())
 
 	if err != nil {
