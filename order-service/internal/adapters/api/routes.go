@@ -1,6 +1,7 @@
 package api
 
 import (
+	"L0/order-service/internal/adapters/api/order"
 	"L0/order-service/internal/domain/config"
 	"github.com/gorilla/mux"
 	"log"
@@ -20,5 +21,6 @@ func InitRouter() error {
 }
 
 func setupRoutes(r *mux.Router) {
-	//r.HandleFunc()
+	r.HandleFunc("/get", order.GetOrder).Methods("GET")
+	r.HandleFunc("/getall", order.GetAll).Methods("GET")
 }

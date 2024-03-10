@@ -5,21 +5,20 @@ import (
 	"L0/order-service/internal/domain/postgres"
 	"context"
 	"log"
-	"sync"
 )
 
 var (
-	CACHE *sync.Map
+	CACHE map[string]models.Order
 )
 
 func InitCache() error {
-	CACHE = &sync.Map{}
+	CACHE = make(map[string]models.Order)
 	orders, err := postgres.GetAll(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, order := range orders {
-		CACHE.Store(order.OrderUid, order)
+		CACHE[order.OrderUid] = order
 	}
 
 	log.Println("Successfully initialized cache")
@@ -28,24 +27,29 @@ func InitCache() error {
 }
 
 func AddToCache(order models.Order) {
-	CACHE.Store(order.OrderUid, order)
+	if _, ok := CACHE[order.OrderUid]; ok {
+		log.Println("This order is already in cache memory")
+		return
+	}
+	CACHE[order.OrderUid] = order
+	log.Println("Successfully added order to cache memory")
 }
 
-func GetFromCache(uid string) (any, error) {
-	order, ok := CACHE.Load(uid)
+func GetFromCache(uid string) (order models.Order, err error) {
+	order, ok := CACHE[uid]
 	if ok {
 		log.Printf("From cache with id: %s", uid)
 		return order, nil
 	}
-	order, err := postgres.GetOrderByUid(context.Background(), uid)
+	order, err = postgres.GetOrderByUid(context.Background(), uid)
 	if err != nil {
-		return nil, err
+		return order, err
 	}
 	log.Printf("From db with id: %s", uid)
 
 	err = InitCache()
 	if err != nil {
-		return nil, err
+		return order, err
 	}
 
 	return order, nil
