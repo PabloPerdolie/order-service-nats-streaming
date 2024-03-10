@@ -24,6 +24,7 @@ func GetOrder(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed to find by id: %v", err)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(order.JsonData)
 }

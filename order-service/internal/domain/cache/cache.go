@@ -27,7 +27,12 @@ func InitCache() error {
 }
 
 func AddToCache(order models.Order) {
+	if _, ok := CACHE[order.OrderUid]; ok {
+		log.Println("This order is already in cache memory")
+		return
+	}
 	CACHE[order.OrderUid] = order
+	log.Println("Successfully added order to cache memory")
 }
 
 func GetFromCache(uid string) (order models.Order, err error) {
